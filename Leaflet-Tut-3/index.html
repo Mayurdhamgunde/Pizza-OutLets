@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        #map{
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map">
+        <div class="leaflet-control coordinate"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+    // Map initialization
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+    //   <!-- Tile-Layers -->
+
+    // osm layer
+        var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        });
+    //    osm.addTo(map);
+
+    // Watercolor
+        var watercolor = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.{ext}', {
+            minZoom: 1,
+            maxZoom: 16,
+            attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            ext: 'jpg'
+        });
+    //    watercolor.addTo(map);
+
+    // Dark
+        var darkmap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        });
+    //    darkmap.addTo(map);
+
+    // Using Google Maps static tiles with Leaflet.. 
+        googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+            maxZoom: 20,
+            subdomains:['mt0','mt1','mt2','mt3']
+        });
+        googleStreets.addTo(map);
+
+    // google street (Satellite view)
+        googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+            maxZoom: 20,
+            subdomains:['mt0','mt1','mt2','mt3']
+        });
+        googleSat.addTo(map);   
+    
+
+    //    <!-- MARKER -->
+
+    //    L.marker([50.5,30.5]).addTo(map);   
+    /*    var singlemarker = L.marker([28.3949,84.1240]);
+        var popup = singlemarker.bindPopup('This is the Nepal').openPopup();
+        popup.addTo(map);
+    */
+
+    //  <!-- ADD ICON -->
+        var myIcon = L.icon({
+            iconUrl:'img/red_marker.png',
+            iconSize: [40, 40]
+        });
+        var singlemarker = L.marker([28.3949,84.1240],{icon:myIcon,draggable:true});   
+        var popup = singlemarker.bindPopup('This is Nepal. '+ singlemarker.getLatLng()).openPopup();
+        popup.addTo(map);
+
+        var secondmarker = L.marker([21.3949,30.1240],{icon:myIcon,draggable:true});   
+
+        console.log(singlemarker.toGeoJSON());
+    
+
+
+    // <!-- LAYER CONTROLS -->
+
+    var baseMaps = {
+        "OSM": osm,
+        "Water color map": watercolor,
+        "Dark": darkmap,
+        "Google Street": googleStreets,
+        "Google Satellite": googleSat
+    }
+    var overlayMaps = {
+        "First Marker": singlemarker,
+        "Second Marker": secondmarker
+    }
+
+    L.control.layers(baseMaps,overlayMaps).addTo(map);
+
+    /*=================================================================
+                            LEAFLET EVENTS
+    ==================================================================*/
+    map.on('mouseover',function(){
+        console.log('Your mouse is over the map');  
+    })
+
+    map.on('mousemove',function(e){
+        document.getElementsByClassName('coordinate')[0].innerHTML = 'lat: '+e.latlng.lat+'lng: '+e.latlng.lng;
+        console.log('lat: '+e.latlng.lat,'lng:'+e.latlng.lng)
+    })
+
+    /*=================================================================
+                            STYLE CUSTOMIZATION             
+    ==================================================================*/
+
+    // Get it by inspecting the browser --
+
+    </script>
+</body>
+</html>

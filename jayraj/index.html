@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Controlled Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <div id="map" style="height: 500px;"></div>
+  <script src="app.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+      
+        function zoomIn() {
+          map.zoomIn();
+        }
+      
+        function zoomOut() {
+          map.zoomOut();
+        }
+      
+        window.zoomIn = zoomIn;
+        window.zoomOut = zoomOut;
+      
+        // Initialize Web Speech API
+        if ('webkitSpeechRecognition' in window) {
+          const recognition = new webkitSpeechRecognition();
+          recognition.lang = 'en-US';
+          recognition.continuous = false;
+          recognition.interimResults = true;
+      
+          recognition.onresult = function(event) {
+            const command = event.results[0][0].transcript.toLowerCase();
+            if (command.includes('zoom in')) {
+              zoomIn();
+            } else if (command.includes('zoom out')) {
+              zoomOut();
+            }
+          };
+      
+          recognition.onend = function() {
+            recognition.start();
+          };
+      
+          recognition.start();
+        } else {
+          console.log("Web Speech API not supported in this browser.");
+        }
+      });
+  </script>
+</body>
+</html>
